@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./app.js"></script>
+    <link rel="stylesheet" href="./style.css" />
+    <title>Budget Buddy</title>
+  </head>
+  <body>
+    <div class="top-panel">
+      <div id="month">Available Budget in CANNOT FETCH DATE</div>
+      <div id="net">0.00</div>
+      <div id="income">
+        <p>Income</p>
+        <div id="income-num">0.00</div>
+      </div>
+      <div id="expenses">
+        <p>Expenses</p>
+        <div id="expenses-num">0.00</div>
+      </div>
+    </div>
+    <div class="bottom-panel">
+      <div class="add">
+        <div class="add-container">
+          <div class="add-field-container">
+            <select name="type" id="type">
+              <option value="inc">Income (+)</option>
+              <option value="exp">Expenses (-)</option>
+            </select>
+          </div>
+          <div class="add-field-container">
+            <input type="text" placeholder="Add title" id="item-title" />
+            <div class="add-err" id="err1">*This field is required</div>
+          </div>
+          <div class="add-field-container">
+            <input type="text" placeholder="Add description" id="item-desc" />
+          </div>
+          <div class="add-field-container">
+            <input type="number" min="0" placeholder="Value" id="item-value" />
+            <div class="add-err" id="err2">*This field is required</div>
+          </div>
+          <div class="add-item-btn-container">
+            <img src="./add-income.png" class="check" id="check" />
+          </div>
+        </div>
+      </div>
+      <div class="table">
+        <div class="table-container">
+          <div class="table-left">
+            <div id="table-left-heading">Income</div>
+            <div id="income-table"></div>
+          </div>
+          <div class="table-right">
+            <div id="table-right-heading">Expenses</div>
+            <div id="expenses-table"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("check").addEventListener("click", handleClick);
+      document.getElementById("type").addEventListener("change", function () {
+        const selectValue = this.value;
+        const addIcon = document.getElementById("check");
+
+        if (selectValue === "inc") {
+          addIcon.src = "./add-income.png";
+        } else if (selectValue === "exp") {
+          addIcon.src = "./add-expenses.png";
+        }
+      });
+
+      function getCurrentMonthYear() {
+        const months = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+
+        const currentDate = new Date();
+        const month = months[currentDate.getMonth()];
+        const year = currentDate.getFullYear();
+
+        return `${month} ${year}`;
+      }
+      function updateMonthElement() {
+        const monthElement = document.getElementById("month");
+        const currentMonthYear = getCurrentMonthYear();
+        console.log(currentMonthYear);
+        monthElement.textContent = `Available Budget in ${currentMonthYear}`;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const storedIncomeItems = localStorage.getItem("incomeItems");
+        const storedExpenseItems = localStorage.getItem("expenseItems");
+
+        const parsedIncomeItems = storedIncomeItems
+          ? JSON.parse(storedIncomeItems)
+          : [];
+        const parsedExpenseItems = storedExpenseItems
+          ? JSON.parse(storedExpenseItems)
+          : [];
+
+        incomeItemsArray.length = 0; // Clear the existing array
+        expenseItemArray.length = 0; // Clear the existing array
+        parsedIncomeItems.forEach((item) => incomeItemsArray.push(item));
+        parsedExpenseItems.forEach((item) => expenseItemArray.push(item));
+
+        renderItems(incomeItemsArray, "income-table");
+        renderItems(expenseItemArray, "expenses-table");
+        updateMonthElement();
+        calculateNet();
+      });
+    </script>
+  </body>
+</html>
